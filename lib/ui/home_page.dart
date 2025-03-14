@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:observables/app.dart';
-import 'package:observables/builders/observable_builder.dart';
-import 'package:observables/builders/observable_builder_state.dart';
 import 'package:observables/classes/counter_state.dart';
 import 'package:observables/controllers/state_observable.dart';
+import 'package:observables/mixins/change_state_mixin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,18 +11,17 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with ChangeStateMixin {
   final counter1 = CounterState();
   final counter2 = StateObservable(0);
+  late final StateObservable<int> counter3;
 
   @override
   void initState() {
+    useChangeState(counter1);
+    useChangeState(counter2);
+    counter3 = userStateObservable(0);
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -39,32 +37,19 @@ class _HomePageState extends State<HomePage> {
           spacing: 12,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ObservableBuilder(
-              observable: counter1,
-              builder:
-                  (context, _) =>
-                      Text('Valor do estado 1: ${counter1.counter}'),
-            ),
+            Text('Valor do contador é ${counter1.counter}'),
             ElevatedButton(
-              onPressed: counter1.increment,
+              onPressed: () => counter1.increment(),
               child: Text('Incrementa'),
             ),
-            ObservableBuilderState(
-              stateObservable: counter2,
-              listener: (context, state) {
-                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Valor do contador é $state'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              },
-              buildWhen: (oldState, newState) => newState % 2 == 0,
-              builder: (context, state, _) => Text('Valor do estado 2: $state'),
-            ),
+            Text('Valor do contador é ${counter2.state}'),
             ElevatedButton(
               onPressed: () => counter2.state++,
+              child: Text('Incrementa'),
+            ),
+            Text('Valor do contador é ${counter3.state}'),
+            ElevatedButton(
+              onPressed: () => counter3.state++,
               child: Text('Incrementa'),
             ),
             Text('Troque o tema'),
