@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:observables/app.dart';
 import 'package:observables/classes/counter_state.dart';
 import 'package:observables/controllers/state_observable.dart';
-import 'package:observables/mixins/change_state_mixin.dart';
+import 'package:observables/core/theme/mixins/change_state_mixin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
